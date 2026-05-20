@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./Chatbot.css";
 
 export default function AdmissionChatbot() {
-  const navigate = useNavigate();
   const messagesEndRef = useRef(null);
 
   const [messages, setMessages] = useState([
