@@ -4,8 +4,8 @@ import AdminSidebar from "../components/AdminSidebar";
 import AdminNavbar from "../components/AdminNavbar";
 import "../styles/Admin.css";
 
-const API = "http://localhost:5000/api/admin";
-const BASE = "http://localhost:5000";
+const API = "https://university-admission-support-system.up.railway.app/api/admin";
+const BASE = "https://university-admission-support-system.up.railway.app";
 
 const Documents = () => {
   const [docs, setDocs] = useState([]);

@@ -41,7 +41,7 @@ function Login() {
     // API Call
     try {
       setLoading(true);
-      await axios.post("http://localhost:5000/api/users/login", {
+      await axios.post("https://university-admission-support-system.up.railway.app/api/users/login", {
         email,
         password,
         role

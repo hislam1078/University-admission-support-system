@@ -23,7 +23,7 @@ function Universities() {
     useEffect(() => {
         const fetchUnis = async () => {
             try {
-                const res = await axios.get("http://localhost:5000/api/admin/universities");
+                const res = await axios.get("https://university-admission-support-system.up.railway.app/api/admin/universities");
                 setUniversities(res.data);
             } catch (err) {
                 console.error("Failed to fetch universities", err);

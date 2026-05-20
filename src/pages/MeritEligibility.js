@@ -55,7 +55,7 @@ const Eligibility = () => {
   // ================= FETCH UNIVERSITIES =================
   useEffect(() => {
 
-    fetch("http://localhost:5000/universities")
+    fetch("https://university-admission-support-system.up.railway.app/universities")
 
       .then((res) => res.json())
 
@@ -93,7 +93,7 @@ const Eligibility = () => {
         try {
 
           const res = await fetch(
-            "http://localhost:5000/get-entry-test-rule",
+            "https://university-admission-support-system.up.railway.app/get-entry-test-rule",
             {
               method: "POST",
 
@@ -176,7 +176,7 @@ const Eligibility = () => {
     try {
 
       const response = await fetch(
-        "http://localhost:5000/check-eligibility",
+        "https://university-admission-support-system.up.railway.app/check-eligibility",
         {
           method: "POST",
 
@@ -252,7 +252,7 @@ const Eligibility = () => {
 
       if (currentUserEmail) {
         try {
-          await axios.put(`http://localhost:5000/api/users/${currentUserEmail}`, {
+          await axios.put(`https://university-admission-support-system.up.railway.app/api/users/${currentUserEmail}`, {
             merit: data.merit
           });
           console.log("Merit score saved to database.");

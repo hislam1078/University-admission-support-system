@@ -17,7 +17,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (currentUserEmail) {
-      axios.get(`http://localhost:5000/api/users/${currentUserEmail}`)
+      axios.get(`https://university-admission-support-system.up.railway.app/api/users/${currentUserEmail}`)
         .then(res => {
           setCurrentUser(res.data);
           setProfileImage(res.data.profileImage);
@@ -34,7 +34,7 @@ const Dashboard = () => {
     reader.onloadend = async () => {
       try {
         const base64Image = reader.result;
-        await axios.put(`http://localhost:5000/api/users/${currentUserEmail}`, {
+        await axios.put(`https://university-admission-support-system.up.railway.app/api/users/${currentUserEmail}`, {
           profileImage: base64Image
         });
         setProfileImage(base64Image);

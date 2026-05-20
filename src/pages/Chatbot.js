@@ -46,7 +46,7 @@ export default function AdmissionChatbot() {
       /* Send To Backend */
 
       const response = await axios.post(
-        "http://localhost:5000/api/chat",
+        "https://university-admission-support-system.up.railway.app/api/chat",
         {
           message: text,
         }

@@ -86,7 +86,7 @@ function ResultUpload() {
     try {
 
       const res = await axios.post(
-        "http://localhost:5000/uploadResults",
+        "https://university-admission-support-system.up.railway.app/uploadResults",
         formData
       );
 
@@ -111,7 +111,7 @@ function ResultUpload() {
 
       if (currentUserEmail) {
         try {
-          await axios.put(`http://localhost:5000/api/users/${currentUserEmail}`, {
+          await axios.put(`https://university-admission-support-system.up.railway.app/api/users/${currentUserEmail}`, {
             uploadedDocuments: uploadedCount
           });
         } catch (err) {

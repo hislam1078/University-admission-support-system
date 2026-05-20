@@ -115,7 +115,7 @@ function Signup() {
     // API Call
     try {
       setLoading(true);
-      await axios.post("http://localhost:5000/api/users/signup", {
+      await axios.post("https://university-admission-support-system.up.railway.app/api/users/signup", {
         name,
         email,
         password

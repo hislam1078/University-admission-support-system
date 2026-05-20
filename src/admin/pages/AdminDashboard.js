@@ -5,7 +5,7 @@ import AdminSidebar from "../components/AdminSidebar";
 import AdminNavbar from "../components/AdminNavbar";
 import "../styles/Admin.css";
 
-const API = "http://localhost:5000/api/admin";
+const API = "https://university-admission-support-system.up.railway.app/api/admin";
 
 const statConfig = [
   {

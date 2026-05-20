@@ -56,7 +56,7 @@ function UniversityRecommendation() {
       setLoading(true);
 
       const res = await axios.post(
-        "http://localhost:5000/recommend-universities",
+        "https://university-admission-support-system.up.railway.app/recommend-universities",
         formData
       );
 

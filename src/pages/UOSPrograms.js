@@ -15,7 +15,7 @@ export default function UOSPrograms() {
   useEffect(() => {
     const fetchUniversity = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/admin/universities/${id}`);
+        const res = await axios.get(`https://university-admission-support-system.up.railway.app/api/admin/universities/${id}`);
         setUniversity(res.data);
       } catch (err) {
         console.error("Failed to fetch university programs", err);
