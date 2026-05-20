@@ -1,41 +1,60 @@
-const multer = require("multer");
-const ResultDocuments = require("./models/ResultDocuments");
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
 
 require("dotenv").config();
 
+const ResultDocuments = require("./models/ResultDocuments");
 const University = require("./models/University");
 
-/* Chatbot Routes */
+/* Routes */
 const chatRoutes = require("./routes/chatRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const userRoutes = require("./routes/userRoutes");
 
+const connectDB = require("./db");
+
 const app = express();
+
+/* ================= MIDDLEWARE ================= */
 
 app.use(cors());
 app.use(express.json());
 
+/* ================= DATABASE ================= */
+
+connectDB();
+
+/* ================= ROUTES ================= */
+
+app.use("/api/chat", chatRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/users", userRoutes);
-// ================= MULTER STORAGE =================
+
+/* ================= MULTER SETUP ================= */
+
+const uploadPath = path.join(__dirname, "uploads");
+
+/* Create uploads folder automatically */
+if (!fs.existsSync(uploadPath)) {
+  fs.mkdirSync(uploadPath, { recursive: true });
+}
 
 const storage = multer.diskStorage({
 
   destination: function (req, file, cb) {
 
-    cb(null, "uploads/");
+    cb(null, uploadPath);
   },
 
   filename: function (req, file, cb) {
 
     cb(
       null,
-      Date.now() +
-      "-" +
-      file.originalname
+      Date.now() + "-" + file.originalname
     );
   }
 });
@@ -51,49 +70,35 @@ const upload = multer({
   fileFilter: (req, file, cb) => {
 
     const allowedTypes = [
-
       "application/pdf",
-
       "image/png",
-
       "image/jpeg",
-
       "image/jpg"
     ];
 
-    if (
-      allowedTypes.includes(file.mimetype)
-    ) {
+    if (allowedTypes.includes(file.mimetype)) {
 
       cb(null, true);
 
     } else {
 
       cb(
-        new Error(
-          "Only PDF and image files allowed"
-        ),
+        new Error("Only PDF and image files allowed"),
         false
       );
     }
   }
 });
 
-// ================= STATIC FOLDER =================
+/* ================= STATIC FILES ================= */
 
 app.use(
   "/uploads",
-  express.static("uploads")
+  express.static(uploadPath)
 );
 
-/* Chatbot API */
-app.use("/api/chat", chatRoutes);
+/* ================= GET UNIVERSITIES ================= */
 
-// ================= CONNECT DB =================
-const connectDB = require("./db");
-connectDB();
-
-// ================= GET UNIVERSITIES =================
 app.get("/universities", async (req, res) => {
 
   try {
@@ -110,7 +115,8 @@ app.get("/universities", async (req, res) => {
   }
 });
 
-// ================= ENTRY TEST RULE API =================
+/* ================= ENTRY TEST RULE ================= */
+
 app.post("/get-entry-test-rule", async (req, res) => {
 
   try {
@@ -156,7 +162,7 @@ app.post("/get-entry-test-rule", async (req, res) => {
 
   } catch (error) {
 
-    console.error("❌ Error:", error);
+    console.error(error);
 
     res.status(500).json({
       error: error.message
@@ -164,7 +170,8 @@ app.post("/get-entry-test-rule", async (req, res) => {
   }
 });
 
-// ================= CHECK ELIGIBILITY API =================
+/* ================= CHECK ELIGIBILITY ================= */
+
 app.post("/check-eligibility", async (req, res) => {
 
   try {
@@ -176,14 +183,6 @@ app.post("/check-eligibility", async (req, res) => {
       marks
     } = req.body;
 
-    console.log("📥 Data received:", {
-      selectedUni,
-      department,
-      course,
-      marks
-    });
-
-    // ================= VALIDATION =================
     if (
       !selectedUni ||
       !department ||
@@ -196,7 +195,6 @@ app.post("/check-eligibility", async (req, res) => {
       });
     }
 
-    // ================= GET MARKS =================
     const matricObtained =
       parseFloat(marks.matricObtained) || 0;
 
@@ -221,7 +219,6 @@ app.post("/check-eligibility", async (req, res) => {
     const interPassingYear =
       parseInt(marks.interPassingYear) || 2025;
 
-    // ================= VALIDATE TOTAL MARKS =================
     if (
       matricObtained > matricTotal ||
       interObtained > interTotal ||
@@ -234,42 +231,38 @@ app.post("/check-eligibility", async (req, res) => {
       });
     }
 
-    // ================= GAP YEAR DEDUCTION =================
     const currentYear = 2025;
 
     const gapYears =
       currentYear - interPassingYear;
 
-    // Deduct 10 marks from Inter obtained marks
     if (gapYears >= 1) {
 
       interObtained =
         interObtained - (gapYears * 10);
 
-      // Prevent negative marks
       if (interObtained < 0) {
         interObtained = 0;
       }
     }
 
-    // ================= CONVERT TO PERCENTAGES =================
     const matric =
       (matricObtained / matricTotal) * 100;
 
     const inter =
       (interObtained / interTotal) * 100;
-    // ================= Equalize To 1100 =================
+
     const matricEqualized =
       matric * 11;
 
     const interEqualized =
       inter * 11;
+
     const entryTest =
       entryTotal > 0
         ? (entryObtained / entryTotal) * 100
         : 0;
 
-    // ================= FIND UNIVERSITY =================
     const uni = await University.findOne({
       name: selectedUni
     });
@@ -281,7 +274,6 @@ app.post("/check-eligibility", async (req, res) => {
       });
     }
 
-    // ================= FIND DEPARTMENT =================
     const dept = uni.departments.find(
       (d) => d.name === department
     );
@@ -293,7 +285,6 @@ app.post("/check-eligibility", async (req, res) => {
       });
     }
 
-    // ================= COURSE VALIDATION =================
     if (!dept.courses.includes(course)) {
 
       return res.json({
@@ -303,7 +294,6 @@ app.post("/check-eligibility", async (req, res) => {
 
     const formula = dept.meritFormula;
 
-    // ================= ENTRY TEST REQUIRED =================
     if (
       formula.entryTestRequired &&
       entryObtained === 0
@@ -314,28 +304,26 @@ app.post("/check-eligibility", async (req, res) => {
       });
     }
 
-    // ================= CALCULATE MERIT =================
     let merit;
     let additionalMarks = 0;
 
-    // Hafiz Quran marks
     if (hafizQuran) {
       additionalMarks = 20;
     }
-    // ================= PUNJAB UNIVERSITY =================
+
     if (formula.formulaType === "pu") {
 
-
-
-      // Official PU Formula
       const academic =
         (
           (
-            (matricObtained / 4) + interObtained + additionalMarks
+            (matricObtained / 4) +
+            interObtained +
+            additionalMarks
           )
           /
           (
-            (matricTotal / 4) + interTotal
+            (matricTotal / 4) +
+            interTotal
           )
         ) * 75;
 
@@ -343,97 +331,45 @@ app.post("/check-eligibility", async (req, res) => {
         (entryObtained / entryTotal) * 25;
 
       merit = academic + entryPart;
-    }
 
-    // ================= UOS NORMAL =================
-    else if (
+    } else if (
       formula.formulaType === "uos"
     ) {
 
       merit =
         (formula.matric * matricEqualized) +
-        (formula.inter * interEqualized) + additionalMarks;
-    }
+        (formula.inter * interEqualized) +
+        additionalMarks;
 
-    // ================= UOS ENGINEERING =================
-    else if (
+    } else if (
       formula.formulaType === "uos-engineering"
     ) {
 
       merit =
         (formula.matric * matricEqualized) +
         (formula.inter * interEqualized) +
-        (formula.entryTest * entryTest) + additionalMarks;
-    }
+        (formula.entryTest * entryTest) +
+        additionalMarks;
 
-    // ================= UOS BTECH =================
-    else if (
-      formula.formulaType === "uos-betech"
-    ) {
-
-      merit =
-        (formula.inter * interEqualized) +
-        (formula.entryTest * entryTest) + additionalMarks;
-    }
-
-    // ================= UOS LAW =================
-    else if (
-      formula.formulaType === "uos-law"
-    ) {
-
-      merit = inter + additionalMarks;
-    }
-
-    // ================= GCUF GENERAL =================
-    else if (
-      formula.formulaType === "gcuf-general"
-    ) {
-
-      merit =
-        (formula.matric * matricEqualized) +
-        (formula.inter * interEqualized) + additionalMarks;
-    }
-
-    // ================= GCUF ENGINEERING =================
-    else if (
-      formula.formulaType === "gcuf-ee"
-    ) {
-
-      merit =
-        (formula.matric * matricEqualized) +
-        (formula.inter * interEqualized) +
-        (formula.entryTest * entryTest) + additionalMarks;
-    }
-
-    // ================= GCUF BTECH =================
-    else if (
-      formula.formulaType === "gcuf-btech"
-    ) {
-
-      merit =
-        (formula.inter * interEqualized) +
-        (formula.entryTest * entryTest) + additionalMarks;
-    }
-
-    // ================= OTHER UNIVERSITIES =================
-    else {
+    } else {
 
       if (formula.entryTestRequired) {
 
         merit =
           (formula.matric * matricEqualized) +
           (formula.inter * interEqualized) +
-          (formula.entryTest * entryTest) + additionalMarks;
+          (formula.entryTest * entryTest) +
+          additionalMarks;
 
       } else {
 
         merit =
           (formula.matric * matricEqualized) +
-          (formula.inter * interEqualized) + additionalMarks;
+          (formula.inter * interEqualized) +
+          additionalMarks;
       }
     }
 
-    // ================= ELIGIBILITY =================
     let finalMeritForComparison;
 
     if (formula.formulaType === "pu") {
@@ -445,30 +381,10 @@ app.post("/check-eligibility", async (req, res) => {
     const eligible =
       finalMeritForComparison >= formula.requiredMerit;
 
-    console.log(
-      "✅ Result:",
-      finalMeritForComparison.toFixed(2),
-      eligible
-        ? "Eligible"
-        : "Not Eligible"
-    );
-
-    const cleanTitle = (str) => {
-      if (!str) return "";
-      return str.toLowerCase()
-        .replace(/\b(in|of|and|&)\b/g, '')
-        .replace(/[^a-z0-9]/g, '')
-        .trim();
-    };
-
-    const prog = dept.programs.find(
-      (p) => cleanTitle(p.title) === cleanTitle(course)
-    );
-    const requiredDegree = prog ? prog.requiredDegree : "";
-
-    // ================= RESPONSE =================
     res.json({
-      merit: finalMeritForComparison.toFixed(2),
+
+      merit:
+        finalMeritForComparison.toFixed(2),
 
       eligible,
 
@@ -481,14 +397,13 @@ app.post("/check-eligibility", async (req, res) => {
       similarPrograms:
         dept.similarPrograms,
 
-      requiredDegree,
-
       applyLink:
         dept.applyLink
     });
+
   } catch (error) {
 
-    console.error("❌ Error:", error);
+    console.error(error);
 
     res.json({
       error:
@@ -496,7 +411,8 @@ app.post("/check-eligibility", async (req, res) => {
     });
   }
 });
-// ================= UPLOAD RESULTS API =================
+
+/* ================= UPLOAD RESULTS ================= */
 
 app.post(
 
@@ -511,6 +427,7 @@ app.post(
   async (req, res) => {
 
     try {
+
       if (
         !req.files.matric ||
         !req.files.inter
@@ -562,119 +479,14 @@ app.post(
     }
   }
 );
-// ================= RECOMMEND UNIVERSITIES =================
-app.post(
-  "/recommend-universities",
 
-  async (req, res) => {
-
-    try {
-
-      const {
-        merit,
-        city,
-        degree,
-        type,
-        hostel,
-        maxFee
-      } = req.body;
-
-      const universities =
-        await University.find();
-
-      let recommendations = [];
-
-      universities.forEach((uni) => {
-
-        let score = 0;
-        // CITY SCORE
-
-        if (city === uni.city) {
-          score += 20;
-        }
-
-        // degree SCORE
-
-        if (degree === uni.degree) {
-          score += 20;
-        }
-
-        // TYPE SCORE
-
-        if (type === uni.type) {
-          score += 20;
-        }
-
-        // FEE SCORE
-
-        if (maxFee >= uni.averageFee) {
-          score += 30;
-        }
-
-        // HOSTEL SCORE
-
-        if (
-          hostel === false ||
-          uni.hostel === true
-        ) {
-          score += 10;
-        }
-
-        // DEGREE MATCH
-
-        const degreeFound =
-          uni.departments.some(
-            (dept) =>
-              dept.courses.includes(degree)
-          );
-
-        if (degreeFound) {
-          score += 20;
-        }
-
-        recommendations.push({
-
-          name: uni.name,
-
-          city: uni.city,
-
-          type: uni.type,
-
-          averageFee: uni.averageFee,
-
-          hostel: uni.hostel,
-
-          matchScore: score
-        });
-      });
-
-      recommendations.sort(
-        (a, b) =>
-          b.matchScore - a.matchScore
-      );
-
-      res.json(
-        recommendations.slice(0, 10)
-      );
-
-    } catch (error) {
-
-      console.log(error);
-
-      res.status(500).json({
-        error: error.message
-      });
-    }
-  }
-);
-// ================= START SERVER =================
+/* ================= START SERVER ================= */
 
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
 
   console.log(
-    `🚀 Server running on http://localhost:${PORT}`
+    `🚀 Server running on port ${PORT}`
   );
-
 });
