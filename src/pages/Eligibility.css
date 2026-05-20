@@ -1,0 +1,605 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(135deg, #eef2ff, #f8fafc);
+}
+
+/* ================= CONTAINER ================= */
+
+.eligibility-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px 15px;
+}
+
+/* ================= CARD ================= */
+
+.eligibility-card {
+  width: 100%;
+  max-width: 850px;
+  background: #ffffff;
+  padding: 35px;
+  border-radius: 24px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  animation: fadeIn 0.4s ease;
+}
+
+.eligibility-card h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #1e3a8a;
+  font-size: 32px;
+  font-weight: 700;
+}
+
+/* ================= LABELS ================= */
+
+label {
+  display: block;
+  margin-top: 18px;
+  margin-bottom: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #374151;
+}
+
+/* ================= INPUTS ================= */
+
+input,
+select {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  font-size: 15px;
+  background: #f9fafb;
+  transition: all 0.3s ease;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: #2563eb;
+  
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+}
+
+input::placeholder {
+  color: #9ca3af;
+}
+
+/* ================= GRID ================= */
+
+.marks-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-top: 5px;
+}
+
+/* ================= CHECKBOX ================= */
+
+.checkbox-field {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 22px;
+  background: #f3f4f6;
+  padding: 14px 16px;
+  border-radius: 12px;
+}
+
+.checkbox-field input {
+  width: 18px;
+  height: 18px;
+  accent-color: #2563eb;
+}
+
+.checkbox-field label {
+  margin: 0;
+  cursor: pointer;
+}
+
+/* ================= BUTTON ================= */
+
+.check-btn {
+  width: 100%;
+  margin-top: 30px;
+  padding: 15px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: white;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.check-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.3);
+}
+
+.check-btn:disabled {
+  background: gray;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ================= POPUP ================= */
+
+.merit-popup {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(5px);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 20px;
+  z-index: 999;
+}
+
+/* ================= POPUP CARD ================= */
+
+.merit-content {
+  width: 100%;
+  max-width: 620px;
+  max-height: 90vh;
+
+  overflow-y: auto;
+
+  background: #ffffff;
+  border-radius: 10px;
+
+  padding: 38px 34px;
+
+  animation: popupScale 0.25s ease;
+
+  box-shadow:
+    0 25px 50px rgba(0, 0, 0, 0.18);
+
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+/* ================= SCROLLBAR ================= */
+
+.merit-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.merit-content::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
+/* ================= HEADINGS ================= */
+
+.merit-content h2 {
+  text-align: center;
+  font-size: 34px;
+  font-weight: 700;
+  color: #1e3a8a;
+  margin-bottom: 28px;
+}
+
+.merit-content h3 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1e3a8a;
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+
+/* ================= POPUP INFO ================= */
+
+.popup-info {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  padding-bottom: 25px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.popup-info p {
+  display: grid;
+  grid-template-columns: 170px 1fr;
+
+  align-items: start;
+
+  gap: 10px;
+
+  font-size: 18px;
+  color: #374151;
+
+  line-height: 1.7;
+}
+.popup-info b {
+  color: #111827;
+}
+
+/* ================= STATUS ================= */
+
+.success,
+.fail {
+  margin-top: 10px;
+  padding: 14px 18px;
+
+  border-radius: 14px;
+
+  text-align: center;
+
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.success {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.fail {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+/* ================= EXTRA INFO ================= */
+
+.extra-info {
+  margin-top: 28px;
+}
+
+.cutoff-box,
+.program-box {
+  background: #f8fafc;
+
+  border: 1px solid #e2e8f0;
+
+  border-radius: 18px;
+
+  padding: 22px;
+
+  margin-bottom: 20px;
+}
+
+/* ================= CUTOFF ================= */
+
+.cutoff-years {
+  font-size: 18px;
+  font-weight: 600;
+  color: #374151;
+
+  line-height: 1.8;
+}
+
+/* ================= PROGRAMS ================= */
+
+.extra-info ul {
+  list-style: none;
+  margin-top: 14px;
+}
+
+.extra-info li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 14px 16px;
+
+  margin-bottom: 12px;
+
+  border-radius: 12px;
+
+  background: white;
+
+  border: 1px solid #e5e7eb;
+
+  font-size: 17px;
+  color: #374151;
+}
+
+/* ================= BUTTONS ================= */
+
+.popup-buttons {
+  display: flex;
+  gap: 14px;
+
+  margin-top: 30px;
+}
+
+.popup-buttons button {
+  flex: 1;
+
+  border: none;
+  border-radius: 14px;
+
+  padding: 15px 20px;
+
+  font-size: 17px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: all 0.25s ease;
+}
+
+/* APPLY BUTTON */
+
+.apply-btn {
+  background: linear-gradient(
+    135deg,
+    #2563eb,
+    #1d4ed8
+  );
+
+  color: white;
+}
+
+.apply-btn:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 10px 20px rgba(37, 99, 235, 0.25);
+}
+
+/* CLOSE BUTTON */
+
+.popup-close-btn {
+  background: #ef4444;
+  color: white;
+}
+
+.popup-close-btn:hover {
+  transform: translateY(-2px);
+  background: #dc2626;
+}
+
+/* ================= ANIMATIONS ================= */
+
+@keyframes fadeIn {
+
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes popupScale {
+
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ================= POPUP NEW CUSTOM CLASSES ================= */
+
+.popup-info.centered {
+  text-align: center;
+  display: block;
+}
+
+.merit-badge-value {
+  font-size: 24px;
+  font-weight: bold;
+  color: #1e3a8a;
+}
+
+.popup-info.block-layout {
+  display: block;
+  padding-bottom: 20px;
+}
+
+.success {
+  margin-bottom: 20px;
+}
+
+.success.large,
+.fail.large {
+  margin: 20px 0;
+  padding: 20px;
+}
+
+.fail {
+  margin-bottom: 20px;
+}
+
+.eligibility-prompt-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.eligibility-prompt-text-success {
+  font-size: 15px;
+  font-weight: normal;
+  color: #15803d;
+}
+
+.eligibility-prompt-text-fail {
+  font-size: 15px;
+  font-weight: normal;
+  color: #dc2626;
+}
+
+.eligibility-inline-btn {
+  color: #ffffff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transition: background-color 0.2s;
+}
+
+.eligibility-inline-btn.success-btn {
+  background-color: #15803d;
+}
+
+.eligibility-inline-btn.success-btn:hover {
+  background-color: #166534;
+}
+
+.eligibility-inline-btn.fail-btn {
+  background-color: #dc2626;
+}
+
+.eligibility-inline-btn.fail-btn:hover {
+  background-color: #b91c1c;
+}
+
+.popup-info h3 {
+  margin-bottom: 15px;
+  color: #374151;
+}
+
+.popup-desc {
+  display: block;
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 15px;
+}
+
+.popup-select {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid #cbd5e1;
+  font-size: 16px;
+  background: #f8fafc;
+}
+
+.popup-buttons.margin-top {
+  margin-top: 30px;
+}
+
+.popup-detail-text {
+  display: block;
+  font-size: 16px;
+  color: #475569;
+  margin-bottom: 20px;
+}
+
+.apply-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 768px) {
+
+  .eligibility-card {
+    padding: 24px;
+    border-radius: 18px;
+  }
+
+  .eligibility-card h2 {
+    font-size: 26px;
+  }
+
+  .marks-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .check-btn {
+    padding: 14px;
+    font-size: 16px;
+  }
+
+  .merit-content {
+    padding: 28px 22px;
+  }
+
+  .merit-content h2 {
+    font-size: 28px;
+  }
+
+  .merit-content h3 {
+    font-size: 22px;
+  }
+
+  .popup-info p,
+  .cutoff-years,
+  .extra-info li {
+    font-size: 16px;
+  }
+
+  .popup-buttons {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .eligibility-card {
+    padding: 18px;
+  }
+
+  input,
+  select {
+    padding: 12px;
+    font-size: 14px;
+  }
+
+  .eligibility-card h2 {
+    font-size: 22px;
+  }
+
+  .check-btn {
+    font-size: 15px;
+  }
+
+  .merit-content {
+    padding: 22px 16px;
+    border-radius: 22px;
+  }
+
+  .merit-content h2 {
+    font-size: 24px;
+  }
+
+  .merit-content h3 {
+    font-size: 20px;
+  }
+
+  .popup-info p,
+  .cutoff-years,
+  .extra-info li {
+    font-size: 15px;
+  }
+
+  .popup-buttons button {
+    font-size: 15px;
+    padding: 14px;
+  }
+}
