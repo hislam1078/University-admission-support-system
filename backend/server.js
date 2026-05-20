@@ -285,12 +285,10 @@ app.post("/check-eligibility", async (req, res) => {
       });
     }
 
-    if (!dept.courses.includes(course)) {
-
-      return res.json({
-        error: "Course not found"
-      });
-    }
+    const program = dept.programs?.find(
+      (p) => p.title === course || p.title?.toLowerCase().includes(course.toLowerCase()) || course?.toLowerCase().includes(p.title?.toLowerCase())
+    );
+    const requiredDegree = program?.requiredDegree || "Any Intermediate";
 
     const formula = dept.meritFormula;
 
@@ -398,7 +396,9 @@ app.post("/check-eligibility", async (req, res) => {
         dept.similarPrograms,
 
       applyLink:
-        dept.applyLink
+        dept.applyLink,
+
+      requiredDegree
     });
 
   } catch (error) {

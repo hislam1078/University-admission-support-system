@@ -782,14 +782,18 @@ const Eligibility = () => {
                     className="popup-select"
                   >
                     <option value="">-- Select Degree --</option>
-                    {(popupData?.requiredDegree
-                      ? popupData.requiredDegree.split(',')
-                          .map(d => d.trim().replace(/^(or|and)\s+/i, ''))
-                          .filter(Boolean)
-                      : []
-                    ).map((deg, idx) => (
-                      <option key={idx} value={deg}>{deg}</option>
-                    ))}
+                    {(() => {
+                      const reqStr = popupData?.requiredDegree || "Any Intermediate";
+                      const isAny = /any intermediate|intermediate or equivalent|intermediate/i.test(reqStr);
+                      const degrees = isAny 
+                        ? ["FSc Pre-Medical", "FSc Pre-Engineering", "ICS", "I.Com", "F.A", "A-Level", "DAE"]
+                        : reqStr.split(',')
+                            .map(d => d.trim().replace(/^(or|and)\s+/i, ''))
+                            .filter(Boolean);
+                      return degrees.map((deg, idx) => (
+                        <option key={idx} value={deg}>{deg}</option>
+                      ));
+                    })()}
                     <option value="Other">Other / My degree is not listed</option>
                   </select>
                 </div>
