@@ -689,75 +689,98 @@ const Eligibility = () => {
       {showMeritPopup && (
         <div className="merit-popup">
           <div className="merit-content">
-            <h2>Eligibility Result</h2>
+
+            {/* ===== STEP INDICATOR ===== */}
+            <div className="popup-step-indicator">
+              <div className={`popup-step ${["merit_result"].includes(popupStage) ? "active" : ["check_degree", "eligible", "not_eligible"].includes(popupStage) ? "done" : ""}`}>
+                <div className="popup-step-circle">1</div>
+                <span>Merit</span>
+              </div>
+              <div className="popup-step-line" />
+              <div className={`popup-step ${popupStage === "check_degree" ? "active" : ["eligible", "not_eligible"].includes(popupStage) ? "done" : ""}`}>
+                <div className="popup-step-circle">2</div>
+                <span>Degree</span>
+              </div>
+              <div className="popup-step-line" />
+              <div className={`popup-step ${["eligible", "not_eligible"].includes(popupStage) ? "active" : ""}`}>
+                <div className="popup-step-circle">3</div>
+                <span>Result</span>
+              </div>
+            </div>
 
             {/* ================= STAGE 1: MERIT RESULT ================= */}
             {popupStage === "merit_result" && (
               <>
-                <div className="popup-info centered">
-                  <p className="popup-desc">
-                    <b>Your Calculated Merit:</b> <span className="merit-badge-value">{merit}%</span>
-                  </p>
-                  
-                  {eligible ? (
-                    <div className="success">
-                      <div style={{ marginBottom: '10px' }}>
-                        🎉 Congratulations! Your merit meets the university's last year merit.
-                      </div>
-                      <div className="eligibility-prompt-row">
-                        <span className="eligibility-prompt-text-success">
-                          Please check your eligibility before applying:
-                        </span>
-                        <button 
-                          onClick={() => setPopupStage("check_degree")}
-                          className="eligibility-inline-btn success-btn"
-                        >
-                          Check Eligibility
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="fail">
-                      <div style={{ marginBottom: '10px' }}>
-                        😅 Oops! Your merit does not meet the university's last year merit.
-                      </div>
-                      <div className="eligibility-prompt-row">
-                        <span className="eligibility-prompt-text-fail">
-                          If you still want to apply, please check your eligibility:
-                        </span>
-                        <button 
-                          onClick={() => setPopupStage("check_degree")}
-                          className="eligibility-inline-btn fail-btn"
-                        >
-                          Check Eligibility
-                        </button>
-                      </div>
-                    </div>
-                  )}
+                {/* Merit Score Badge */}
+                <div className="popup-stage1-header">
+                  <div className="popup-stage-icon">🎓</div>
+                  <h2 className="popup-stage-title">Merit Calculation</h2>
+                  <p className="popup-stage-subtitle">Based on your entered marks for <strong>{course}</strong></p>
                 </div>
 
-                <div className="extra-info">
-                  <div className="cutoff-box">
-                    <h3>{course} last 3 year Cutoff in {selectedUni}</h3>
-                    <p className="cutoff-years">
-                      2024: {popupData?.cutoffHistory?.year2024}% | 2023: {popupData?.cutoffHistory?.year2023}% | 2022: {popupData?.cutoffHistory?.year2022}%
-                    </p>
+                <div className="popup-merit-score-card">
+                  <div className="popup-merit-label">Your Calculated Merit</div>
+                  <div className="merit-badge-value">{merit}%</div>
+                  <div className="popup-merit-context">
+                    at <strong>{selectedUni}</strong>
                   </div>
-
-                  {popupData?.similarPrograms && popupData.similarPrograms.length > 0 && (
-                    <div className="program-box">
-                      <h3>Similar Programs at {selectedUni} with last year cutoff</h3>
-                      <ul>
-                        {popupData.similarPrograms.map((program, index) => (
-                          <li key={index}>
-                            <span>{program.name}</span>
-                            <span>{program.merit}%</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
                 </div>
+
+                {eligible ? (
+                  <div className="popup-status-card popup-status-success">
+                    <div className="popup-status-icon-wrap">🎉</div>
+                    <div className="popup-status-message">
+                      <strong>Congratulations!</strong> Your merit meets the university's last year cutoff.
+                    </div>
+                    <button onClick={() => setPopupStage("check_degree")} className="popup-next-btn popup-next-success">
+                      Verify Degree Eligibility →
+                    </button>
+                  </div>
+                ) : (
+                  <div className="popup-status-card popup-status-fail">
+                    <div className="popup-status-icon-wrap">😅</div>
+                    <div className="popup-status-message">
+                      <strong>Below Cutoff.</strong> Your merit doesn't meet last year's cutoff, but you can still verify degree eligibility.
+                    </div>
+                    <button onClick={() => setPopupStage("check_degree")} className="popup-next-btn popup-next-fail">
+                      Check Degree Eligibility →
+                    </button>
+                  </div>
+                )}
+
+                {/* Cutoff History */}
+                <div className="popup-cutoff-section">
+                  <div className="popup-section-label">📊 Last 3 Year Cutoffs — {course}</div>
+                  <div className="popup-cutoff-grid">
+                    <div className="popup-cutoff-year">
+                      <span className="popup-cutoff-yr-label">2024</span>
+                      <span className="popup-cutoff-yr-val">{popupData?.cutoffHistory?.year2024 ?? "—"}%</span>
+                    </div>
+                    <div className="popup-cutoff-year">
+                      <span className="popup-cutoff-yr-label">2023</span>
+                      <span className="popup-cutoff-yr-val">{popupData?.cutoffHistory?.year2023 ?? "—"}%</span>
+                    </div>
+                    <div className="popup-cutoff-year">
+                      <span className="popup-cutoff-yr-label">2022</span>
+                      <span className="popup-cutoff-yr-val">{popupData?.cutoffHistory?.year2022 ?? "—"}%</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Similar Programs */}
+                {popupData?.similarPrograms && popupData.similarPrograms.length > 0 && (
+                  <div className="popup-similar-section">
+                    <div className="popup-section-label">🔗 Similar Programs at {selectedUni}</div>
+                    <ul className="popup-similar-list">
+                      {popupData.similarPrograms.map((prog, i) => (
+                        <li key={i} className="popup-similar-item">
+                          <span>{prog.name}</span>
+                          <span className="popup-similar-merit">{prog.merit}%</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
 
                 <div className="popup-buttons">
                   <button className="popup-close-btn" onClick={() => setShowMeritPopup(false)}>
@@ -770,22 +793,29 @@ const Eligibility = () => {
             {/* ================= STAGE 2: DEGREE SELECTION ================= */}
             {popupStage === "check_degree" && (
               <>
-                <div className="popup-info block-layout">
-                  <h3>Select your Intermediate Degree:</h3>
-                  <p className="popup-desc">
-                    We will verify if your degree matches the required qualification for <b>{course}</b> (Required: {popupData?.requiredDegree || "Any Intermediate"}).
-                  </p>
-                  
-                  <select 
-                    value={userDegree} 
+                <div className="popup-stage1-header">
+                  <div className="popup-stage-icon">📋</div>
+                  <h2 className="popup-stage-title">Degree Verification</h2>
+                  <p className="popup-stage-subtitle">Select your intermediate degree to check qualification for <strong>{course}</strong></p>
+                </div>
+
+                <div className="popup-degree-card">
+                  <div className="popup-degree-required">
+                    <span className="popup-degree-req-label">Required Qualification</span>
+                    <span className="popup-degree-req-value">{popupData?.requiredDegree || "Any Intermediate"}</span>
+                  </div>
+
+                  <label className="popup-select-label">Your Degree</label>
+                  <select
+                    value={userDegree}
                     onChange={(e) => setUserDegree(e.target.value)}
                     className="popup-select"
                   >
-                    <option value="">-- Select Degree --</option>
+                    <option value="">-- Select your degree --</option>
                     {(() => {
                       const reqStr = popupData?.requiredDegree || "Any Intermediate";
                       const isAny = /any intermediate|intermediate or equivalent|intermediate/i.test(reqStr);
-                      const degrees = isAny 
+                      const degrees = isAny
                         ? ["FSc Pre-Medical", "FSc Pre-Engineering", "ICS", "I.Com", "F.A", "A-Level", "DAE"]
                         : reqStr.split(',')
                             .map(d => d.trim().replace(/^(or|and)\s+/i, ''))
@@ -798,9 +828,9 @@ const Eligibility = () => {
                   </select>
                 </div>
 
-                <div className="popup-buttons margin-top">
-                  <button 
-                    className="apply-btn" 
+                <div className="popup-buttons">
+                  <button
+                    className="apply-btn"
                     disabled={!userDegree}
                     onClick={() => {
                       if (userDegree && userDegree !== "Other") {
@@ -810,10 +840,10 @@ const Eligibility = () => {
                       }
                     }}
                   >
-                    Verify Eligibility
+                    Verify Eligibility →
                   </button>
                   <button className="popup-close-btn back-btn" onClick={() => setPopupStage("merit_result")}>
-                    Back
+                    ← Back
                   </button>
                 </div>
               </>
@@ -822,22 +852,41 @@ const Eligibility = () => {
             {/* ================= STAGE 3: ELIGIBLE ================= */}
             {popupStage === "eligible" && (
               <>
-                <div className="popup-info centered">
-                  <div className="success large">
-                    🎉 Congratulations! You are eligible to apply.
+                <div className="popup-stage1-header">
+                  <div className="popup-stage-icon popup-stage-icon-success">✅</div>
+                  <h2 className="popup-stage-title popup-title-success">You're Eligible!</h2>
+                  <p className="popup-stage-subtitle">You qualify to apply for this program</p>
+                </div>
+
+                <div className="popup-result-card popup-result-success">
+                  <div className="popup-result-row">
+                    <span className="popup-result-key">Your Degree</span>
+                    <span className="popup-result-val">{userDegree}</span>
                   </div>
-                  <div className="popup-detail-text">
-                    Your academic degree (<b>{userDegree}</b>) is accepted for <b>{course}</b> at {selectedUni}.
+                  <div className="popup-result-divider" />
+                  <div className="popup-result-row">
+                    <span className="popup-result-key">Program</span>
+                    <span className="popup-result-val">{course}</span>
+                  </div>
+                  <div className="popup-result-divider" />
+                  <div className="popup-result-row">
+                    <span className="popup-result-key">University</span>
+                    <span className="popup-result-val">{selectedUni}</span>
+                  </div>
+                  <div className="popup-result-divider" />
+                  <div className="popup-result-row">
+                    <span className="popup-result-key">Merit Score</span>
+                    <span className="popup-result-val popup-result-merit">{merit}%</span>
                   </div>
                 </div>
 
                 <div className="popup-buttons">
                   {popupData?.applyLink ? (
                     <button className="apply-btn" onClick={() => window.open(popupData.applyLink, "_blank")}>
-                      Apply Now
+                      🚀 Apply Now
                     </button>
                   ) : (
-                    <button className="apply-btn" disabled style={{ background: 'gray', cursor: 'not-allowed' }}>
+                    <button className="apply-btn" disabled>
                       Apply Link N/A
                     </button>
                   )}
@@ -851,18 +900,32 @@ const Eligibility = () => {
             {/* ================= STAGE 4: NOT ELIGIBLE ================= */}
             {popupStage === "not_eligible" && (
               <>
-                <div className="popup-info centered">
-                  <div className="fail large">
-                    ❌ You are not eligible to apply.
+                <div className="popup-stage1-header">
+                  <div className="popup-stage-icon popup-stage-icon-fail">❌</div>
+                  <h2 className="popup-stage-title popup-title-fail">Not Eligible</h2>
+                  <p className="popup-stage-subtitle">Your degree does not match the requirements</p>
+                </div>
+
+                <div className="popup-result-card popup-result-fail">
+                  <div className="popup-result-row">
+                    <span className="popup-result-key">Your Degree</span>
+                    <span className="popup-result-val">{userDegree}</span>
                   </div>
-                  <div className="popup-detail-text">
-                    Please check eligibility for course before applying. Your degree (<b>{userDegree}</b>) does not match the requirements for this course (Required: {popupData?.requiredDegree || "N/A"}).
+                  <div className="popup-result-divider" />
+                  <div className="popup-result-row">
+                    <span className="popup-result-key">Required</span>
+                    <span className="popup-result-val">{popupData?.requiredDegree || "N/A"}</span>
+                  </div>
+                  <div className="popup-result-divider" />
+                  <div className="popup-result-row">
+                    <span className="popup-result-key">Program</span>
+                    <span className="popup-result-val">{course}</span>
                   </div>
                 </div>
 
                 <div className="popup-buttons">
-                  <button 
-                    className="apply-btn" 
+                  <button
+                    className="apply-btn"
                     onClick={() => {
                       setShowMeritPopup(false);
                       const uniObj = universities.find(u => u.name === selectedUni);
@@ -873,7 +936,7 @@ const Eligibility = () => {
                       }
                     }}
                   >
-                    Check Eligibility Details
+                    View All Programs
                   </button>
                   <button className="popup-close-btn" onClick={() => setShowMeritPopup(false)}>
                     Close
