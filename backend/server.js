@@ -286,9 +286,15 @@ app.post("/check-eligibility", async (req, res) => {
     }
 
     const program = dept.programs?.find(
-      (p) => p.title === course || p.title?.toLowerCase().includes(course.toLowerCase()) || course?.toLowerCase().includes(p.title?.toLowerCase())
+      (p) =>
+        p.title === course ||
+        p.title?.toLowerCase().includes(course.toLowerCase()) ||
+        course?.toLowerCase().includes(p.title?.toLowerCase())
     );
-    const requiredDegree = program?.requiredDegree || "Any Intermediate";
+
+    const requiredDegree =
+      program?.requiredDegree ||
+      "Any Intermediate";
 
     const formula = dept.meritFormula;
 
@@ -475,6 +481,124 @@ app.post(
       res.status(500).json({
         error:
           "Upload failed"
+      });
+    }
+  }
+);
+
+/* ================= RECOMMEND UNIVERSITIES ================= */
+
+app.post(
+  "/recommend-universities",
+
+  async (req, res) => {
+
+    try {
+
+      const {
+        city,
+        degree,
+        type,
+        hostel,
+        maxFee
+      } = req.body;
+
+      const universities =
+        await University.find();
+
+      let recommendations = [];
+
+      universities.forEach((uni) => {
+
+        let score = 0;
+
+        /* CITY SCORE */
+
+        if (
+          uni.city?.toLowerCase() ===
+          city.toLowerCase()
+        ) {
+
+          score += 20;
+        }
+
+        /* TYPE SCORE */
+
+        if (
+          uni.type?.toLowerCase() ===
+          type.toLowerCase()
+        ) {
+
+          score += 20;
+        }
+
+        /* HOSTEL SCORE */
+
+        if (
+          hostel === false ||
+          uni.hostel === true
+        ) {
+
+          score += 10;
+        }
+
+        /* FEE SCORE */
+
+        if (
+          parseInt(uni.averageFee) <=
+          parseInt(maxFee)
+        ) {
+
+          score += 30;
+        }
+
+        /* DEGREE SCORE */
+
+        const degreeFound =
+          uni.departments?.some((dept) =>
+            dept.courses?.some((course) =>
+              course.toLowerCase().includes(
+                degree.toLowerCase()
+              )
+            )
+          );
+
+        if (degreeFound) {
+
+          score += 20;
+        }
+
+        recommendations.push({
+
+          name: uni.name,
+
+          city: uni.city,
+
+          type: uni.type,
+
+          averageFee: uni.averageFee,
+
+          hostel: uni.hostel,
+
+          matchScore: score
+        });
+      });
+
+      recommendations.sort(
+        (a, b) =>
+          b.matchScore - a.matchScore
+      );
+
+      res.json(
+        recommendations.slice(0, 10)
+      );
+
+    } catch (error) {
+
+      console.log(error);
+
+      res.status(500).json({
+        error: error.message
       });
     }
   }
