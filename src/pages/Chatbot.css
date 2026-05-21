@@ -49,11 +49,11 @@ body,
 
 .chatbot{
 
-width:100%;
+  width:100%;
 
   max-width:1400px;
 
-  height:calc(100vh - 40px);
+  height:92vh;
 
   display:flex;
 
@@ -368,28 +368,7 @@ width:100%;
   box-shadow:
   0 10px 20px rgba(37,99,235,0.35);
 }
-/* ================= DESKTOP INPUT FIX ================= */
 
-.chat-section{
-
-  height:100%;
-
-  display:flex;
-
-  flex-direction:column;
-}
-
-.chat-area{
-
-  flex:1;
-
-  min-height:0;
-}
-
-.input-area{
-
-  margin-top:auto;
-}
 /* ================= TABLET ================= */
 
 /* ================= TABLET & MOBILE ================= */
